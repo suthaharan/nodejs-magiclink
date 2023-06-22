@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Magic Link - Passwordless Login <%= title %></title>
+    <link rel="stylesheet" href="/styles.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
+
+    <script src="https://cdn.jsdelivr.net/npm/magic-sdk/dist/magic.js"></script>
+    <script>
+      const magic = new Magic("<%= MAGIC_PUBLISHABLE_KEY %>");
+      const serverUrl = window.location.href;
+      const render = async () => {
+        /* Show login form if user is not logged in */
+        let html = `
+        <div class="container mt-4">
+            <div class="card" style="width: 18rem;">            
+                <div class="card-header">Login Form</div>    
+                <div class="card-body">
+                    <form onsubmit="handleLogin(event)">
+                        <div class="mb-3">
+                            <label for="name-lgn" class="form-label">EMail</label>
+                            <input type="email" name="email" required="required" placeholder="Enter your email" />                      
+                        </div>    
+                        <button type="submit" class="btn btn-secondary" id="signin-button">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        `;
+        /* Get user data including email & apple count */
+        let res = await fetch(`${serverUrl}user/`);
+        if (res.status == 200) {
+          let userData = await res.json();
+          let appleCount = userData.appleCount;
+          let appleDisplay =
+            appleCount > 0 ? "🍎".repeat(appleCount) : "You have no apples...";
+          html = `
+            <div class="mt-4 p-5 bg-secondary text-white rounded">
+                <h1>Magic Link Project</h1>
+            
+                <h1>Current user: ${userData.email}</h1>
+                <div id="apple-count">${appleDisplay}</div>
+                <button onclick="handleBuyApple()">Buy Apple</button>
+                <button onclick="handleLogout()">Logout</button>
+            </div>
+          `;
+        }
+        document.getElementById("app").innerHTML = html;
+      };
+
+      const handleLogin = async e => {
+        e.preventDefault();
+        const email = new FormData(e.target).get("email");
+        if (email) {
+          /* One-liner login 🤯 */
+          const didToken = await magic.auth.loginWithMagicLink({ email });
+          await fetch(`${serverUrl}user/login`, {
+            headers: new Headers({
+              Authorization: "Bearer " + didToken
+            }),
+            withCredentials: true,
+            credentials: "same-origin",
+            method: "POST"
+          });
+          render();
+        }
+      };
+
+      const handleLogout = async () => {
+        await fetch(`${serverUrl}user/logout`, { method: "POST" });
+        render();
+      };
+
+      const handleBuyApple = async () => {
+        await fetch(`${serverUrl}user/buy-apple`, { method: "POST" });
+        render();
+      };
+    </script>
+  </head>
+  <body onload="render()">
+    <nav>
+        <h4>Passwordless Login</h4>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/login">Login</a></li>
+            <li><a href="/register">Register</a></li>
+        </ul>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="mt-4 p-5 bg-secondary text-white rounded">
+            <h1>Magic Link Project</h1>
+            <p>This project demostrates how to implement login and register functionalities with Magick Link. </p>
+        </div>
+        <div id="app">Loading...</div>
+    </div>
+  </body>
+</html>

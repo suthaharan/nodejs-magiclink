@@ -1,5 +1,5 @@
 {
-  "name": "nodejs-form",
+  "name": "nodejs-magiclink",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -11,13 +11,17 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "bcryptjs": "^2.4.3",
-    "cookie-parser": "^1.4.6",
-    "dotenv": "^16.0.2",
-    "express": "^4.18.1",
-    "hbs": "^4.2.0",
-    "jsonwebtoken": "^8.5.1",
-    "mysql": "^2.18.1",
-    "nodemon": "^2.0.19"
+    "@magic-sdk/admin": "^1.0.0",
+    "cookie-parser": "~1.4.4",
+    "debug": "~2.6.9",
+    "dotenv": "^16.3.1",
+    "ejs": "3.1.2",
+    "express": "~4.16.1",
+    "express-session": "1.17.0",
+    "morgan": "~1.9.1",
+    "nedb-promise": "2.0.1",
+    "nodemon": "^2.0.22",
+    "passport": "0.4.1",
+    "passport-magic": "^1.0.0"
   }
 }
