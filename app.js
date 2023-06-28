@@ -7,6 +7,9 @@ const passport = require("passport");
 
 const indexRouter = require("./routes/index");
 const userRouter = require("./routes/user");
+const useMagicRouter = require("./routes/usemagic");
+const mangoRouter = require("./routes/mango");
+
 
 const app = express();
 app.set("trust proxy", 1);
@@ -34,6 +37,8 @@ app.use(passport.session());
 
 app.use("/", indexRouter);
 app.use("/user", userRouter);
+app.use("/usemagic", useMagicRouter);
+app.use("/mango", mangoRouter);
 
 const listener = app.listen(5000, function() {
   console.log("Listening on port " + listener.address().port);

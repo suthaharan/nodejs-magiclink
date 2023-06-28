@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const Datastore = require("nedb-promise");
-let users = new Datastore({ filename: "users.db", autoload: true });
+let users = new Datastore({ filename: "mango.db", autoload: true });
 const dotenv = require('dotenv')
 dotenv.config({ path: './.env'})
 /* 1️⃣ Setup Magic Admin SDK */
@@ -95,18 +95,6 @@ router.get("/", async (req, res) => {
   }
 });
 
-/* Implement Buy Apple Endpoint */
-router.post("/buy-apple", async (req, res) => {
-  if (req.isAuthenticated()) {
-    await users.update(
-      { issuer: req.user.issuer },
-      { $inc: { appleCount: 1 } }
-    );
-    return res.status(200).end();
-  } else {
-    return res.status(401).end(`User is not logged in.`);
-  }
-});
 
 /* Implement Buy Apple Endpoint */
 router.post("/buy-mango", async (req, res) => {

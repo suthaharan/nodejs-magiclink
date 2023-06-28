@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Magic Link - Passwordless Login <%= title %></title>
+    <title>Magic Mango - Passwordless Login <%= title %></title>
     <link rel="stylesheet" href="/styles.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
 
@@ -21,7 +21,7 @@
                 <div class="card-body">
                     <form onsubmit="handleLogin(event)">
                         <div class="mb-3">
-                            <label for="name-lgn" class="form-label">EMail</label>
+                            <label for="name-lgn" class="form-label">email</label>
                             <input type="email" name="email" required="required" placeholder="Enter your email" />                      
                         </div>    
                         <button type="submit" class="btn btn-secondary" id="signin-button">Submit</button>
@@ -31,20 +31,20 @@
         </div>
 
         `;
-        /* Get user data including email & apple count */
-        let res = await fetch(`${serverUrl}user/`);
+        /* Get user data including email & mango count */
+        let res = await fetch(`/mango`);
         if (res.status == 200) {
           let userData = await res.json();
-          let appleCount = userData.appleCount;
-          let appleDisplay =
-            appleCount > 0 ? "🍎".repeat(appleCount) : "You have no apples...";
+          let mangoCount = userData.mangoCount;
+          let mangoDisplay =
+            mangoCount > 0 ? "🥭".repeat(mangoCount) : "You have no mangoes...";
           html = `
             <div class="mt-4 p-5 bg-secondary text-white rounded">
                 <h1>Magic Link Project</h1>
             
                 <h1>Current user: ${userData.email}</h1>
-                <div id="apple-count">${appleDisplay}</div>
-                <button onclick="handleBuyApple()">Buy Apple</button>
+                <div id="mango-count">${mangoDisplay}</div>
+                <button onclick="handleBuymango()">Buy mango</button>
                 <button onclick="handleLogout()">Logout</button>
             </div>
           `;
@@ -54,11 +54,12 @@
 
       const handleLogin = async e => {
         e.preventDefault();
+        console.log("Mango login event")
         const email = new FormData(e.target).get("email");
         if (email) {
           /* One-liner login 🤯 */
-          const didToken = await magic.auth.loginWithMagicLink({ email });
-          await fetch(`${serverUrl}user/login`, {
+          const didToken = await magic.auth.loginWithEmailOTP({ email });
+          await fetch(`/mango/login`, {
             headers: new Headers({
               Authorization: "Bearer " + didToken
             }),
@@ -71,12 +72,12 @@
       };
 
       const handleLogout = async () => {
-        await fetch(`${serverUrl}user/logout`, { method: "POST" });
+        await fetch(`/mango/logout`, { method: "POST" });
         render();
       };
 
-      const handleBuyApple = async () => {
-        await fetch(`${serverUrl}user/buy-apple`, { method: "POST" });
+      const handleBuymango = async () => {
+        await fetch(`/mango/buy-mango`, { method: "POST" });
         render();
       };
     </script>
@@ -93,7 +94,7 @@
 
     <div class="container mt-4">
         <div class="mt-4 p-5 bg-secondary text-white rounded">
-            <h1>Magic Link Project (Auth)</h1>
+            <h1>Magic Link Project (Mango)</h1>
             <p>This project demostrates how to implement login and register functionalities with Magick Link. </p>
         </div>
         <div id="app">Loading...</div>
